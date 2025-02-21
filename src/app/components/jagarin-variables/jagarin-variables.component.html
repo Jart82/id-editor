@@ -1,0 +1,54 @@
+<div class="container text-center mb-5 vh-100">
+    <h3>Id creator</h3>
+
+    
+
+    <div class="d-flex justify-content-center align-items-center m-5">
+        <div class="card" style="width:400px">
+            <div class="card-body">
+                <h4 class="card-title">{{companyName}}</h4>
+                <img [src]="img" class="card-img-top mb-3" width="100%" height="400px" alt="Profile image">
+                <p class="card-text">{{name}}</p>
+              <p class="card-text">{{position}}</p>
+              <p class="card-text">{{dateEmployed}}</p>
+              <p class="card-text">{{experience}}</p>
+            </div>
+          </div>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center mt-5">
+        <div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Profile Image: </label>
+                <input type="file" class="form-control" (change)="onFileSelected($event)"> <!-- using ng model to bind a property --> 
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Name: </label>
+                <input type="text" [(ngModel)]="name" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">Position: </label>
+                <input type="text" [(ngModel)]="position" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="employmentDate" class="form-label">Employment Date: </label>
+                <input type="text" id="date" class="form-control" [(ngModel)]="dateEmployed" [value]="currentDate">
+            </div>
+            <div class="mb-3">
+                <label for="experience" class="form-label">Experience: </label>
+                <select [(ngModel)]="experience" class="form-select mb-5" id="experience">
+                    <option value="ENTRY LEVEL">ENTRY LEVEL</option>
+                    <option value="MID LEVEL">MID LEVEL</option>
+                    <option value="SENIOR LEVEL">SENIOR LEVEL</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <a href="playground/jagarin-variables" class="link-underline-none"><button class="btn btn-success" (click)="showCardAlert()">Submit</button></a>   <!--adding event listener-->
+            </div>
+        </div>
+    </div>
+    
+    
+
+
+</div>
