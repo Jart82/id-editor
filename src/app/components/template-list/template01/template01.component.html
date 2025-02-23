@@ -1,9 +1,41 @@
-<div class="card" style="width: 500px">
-  <!-- <img class="card-img-top" src="img_avatar1.png" alt="Card image" />
-  <div class="card-img-overlay">
-    <h4 class="card-title">John Doe</h4>
-    <p class="card-text">Some example text.</p>
-    <a href="#" class="btn btn-primary">See Profile</a>
-  </div> -->
-  
+<div class="card custom-card">
+  <div class="container p-5">
+    <div class="hospback">
+      <div class="row">
+        <div class="col-md-8 col-12">
+          <div class="row">
+            <div class="col-12">
+              <div class="row">
+                <div class="col-3">
+                  <img [src]="logo" alt="logo" class="logo-img" />
+                </div>
+                <div class="col-9">
+                  <h3>{{ companyName }}</h3>
+                </div>
+                <div class="col-12">
+                  <div>
+                    <h3>{{ name }}</h3>
+                    <p>{{ role }}</p>
+                  </div>
+                  <p><b>ID: <span>{{ idNumber }}</span></b></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <img [src]="passport" alt="passport" class="passport-img" />
+        </div>
+      </div>
+      <div class="row foot">
+        <div class="col-md-8 col-12">
+          <h4>{{ department }}</h4>
+        </div>
+        <div class="col-md-4 col-12">
+          <!-- Barcode will be placed here -->
+          <!-- <ngx-barcode [bc-value]="idNumber" bc-format="CODE128"></ngx-barcode> -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
