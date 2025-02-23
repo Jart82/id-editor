@@ -1,0 +1,6 @@
+catbtn:hover{
+    background-color: aquamarine;
+}
+catbtn:focus{
+    background-color: rgb(62, 171, 135);
+}

@@ -17,8 +17,7 @@ export class Template01Component {
   idNumber: string = '12345';
   passport: string = 'assets/closeup-young-female-professional-making-eye-contact-against-colored-background.jpg';
   department: string = 'Pediatrics';
-  barcode: string = '';
-  group: string = ''
+  category: string = 'all';
 
   currentView: string = 'front';
 
