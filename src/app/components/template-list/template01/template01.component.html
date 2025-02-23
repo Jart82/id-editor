@@ -1,39 +1,43 @@
-<div class="card custom-card">
-  <div class="container p-5">
+<div class="card mx-auto p-3" style="width: 100%; max-width: 500px;">
+  <!-- front side -->
+  <div class="container p-3">
     <div class="hospback">
-      <div class="row">
-        <div class="col-md-8 col-12">
+      <div class="row g-2 align-items-center">
+        <div class="col-12 col-md-7">
           <div class="row">
+            <div class="col-2">
+              <!-- logo -->
+              <img [src]="logo" alt="logo" class="img-fluid" style="max-width: 40px;" />
+            </div>
+            <!-- company name -->
+            <div class="col-10" id="compname">
+              <h5 class="p-2">{{ companyName }}</h5>
+            </div>
+
             <div class="col-12">
-              <div class="row">
-                <div class="col-3">
-                  <img [src]="logo" alt="logo" class="logo-img" />
-                </div>
-                <div class="col-9">
-                  <h3>{{ companyName }}</h3>
-                </div>
-                <div class="col-12">
-                  <div>
-                    <h3>{{ name }}</h3>
-                    <p>{{ role }}</p>
-                  </div>
-                  <p><b>ID: <span>{{ idNumber }}</span></b></p>
-                </div>
+              <div>
+                <h4 class="text-truncate">{{ name }}</h4>
+                <p class="text-muted">{{ role }}</p>
               </div>
+              <p><b>ID: <span>{{ idNumber }}</span></b></p>
             </div>
           </div>
         </div>
-        <div class="col-md-4 col-12">
-          <img [src]="passport" alt="passport" class="passport-img" />
+
+        <div class="col-12 col-md-5 text-center">
+          <!-- image section -->
+          <img [src]="passport" alt="passport" class="img-fluid" style="max-height: 140px;" />
         </div>
       </div>
-      <div class="row foot">
-        <div class="col-md-8 col-12">
-          <h4>{{ department }}</h4>
+
+      <div class="row foot mt-2">
+        <div class="col-8">
+          <!-- job department -->
+          <h4 class="text-truncate">{{ department }}</h4>
         </div>
-        <div class="col-md-4 col-12">
-          <!-- Barcode will be placed here -->
-          <!-- <ngx-barcode [bc-value]="idNumber" bc-format="CODE128"></ngx-barcode> -->
+        <div class="col-4 text-end">
+          <!-- barcode -->
+          <qrcode [qrdata]="name" [width]="40" [errorCorrectionLevel]="'M'"></qrcode>
         </div>
       </div>
     </div>

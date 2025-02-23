@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { NgxBarcode6Module } from 'ngx-barcode6';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 @Component({
   selector: 'app-template01',
   standalone: true, // ✅ Ensure standalone component
-  imports: [NgxBarcode6Module], // ✅ Correct usage in Angular 15+
+  imports: [NgxBarcode6Module, QRCodeComponent], 
   templateUrl: './template01.component.html',
   styleUrls: ['./template01.component.css']
 })
@@ -17,6 +18,7 @@ export class Template01Component {
   passport: string = 'assets/closeup-young-female-professional-making-eye-contact-against-colored-background.jpg';
   department: string = 'Pediatrics';
   barcode: string = '';
+  group: string = ''
 
   currentView: string = 'front';
 
