@@ -1,6 +1,38 @@
-catbtn:hover{
-    background-color: aquamarine;
+.catbody {
+  width: 100%;
 }
-catbtn:focus{
-    background-color: rgb(62, 171, 135);
+
+.catbtn {
+  background-color: transparent;
+  /* Default background */
+  color: white;
+  /* Text color */
+  transition: all 0.3s ease-in-out;
+  /* Smooth transition */
+  border-radius: 5px;
+  /* Rounded corners */
 }
+
+.catbtn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  /* Light hover effect */
+  color: #f8f9fa;
+  /* Slightly lighter text */
+  cursor: pointer;
+}
+
+.catbtn:focus {
+  outline: 2px solid #f8f9fa;
+  /* White outline for focus */
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1050;
+}
+  

@@ -1,21 +1,30 @@
-<p>category works!</p>
-<div class="row p-3">
-    <div class="col-2 bg-secondary">
-        <h5>Templates Categories</h5>
-        <div>
-            <p class="col-12 p-2 catbtn">All</p>
-            <p class="col-12 p-2 catbtn">Attorney Id Cards</p>
-            <p class="col-12 p-2 catbtn">Church Badges</p>
-            <p class="col-12 p-2 catbtn">Doctor</p>
-            <p class="col-12 p-2 catbtn">Employees Badges</p>
-            <p class="col-12 p-2 catbtn">Firefighter ID Cards</p>
-            <p class="col-12 p-2 catbtn">Press Pass</p>
-            <p class="col-12 p-2 catbtn">School ID Cards</p>
-            <p class="col-12 p-2 catbtn">Service Dogs ID Cards</p>
-        </div>
-    </div>
-    <div class="col-10">
-        <app-template-list></app-template-list>
+<div class="container-fluid">
+  <!-- Toggle Button for Mobile -->
+  <button class="btn btn-primary d-md-none mb-3" (click)="isSidebarOpen = !isSidebarOpen">
+    {{ isSidebarOpen ? "Hide Categories" : "Show Categories" }}
+  </button>
+
+  <div class="row">
+    <!-- Sidebar (Toggle for Mobile) -->
+    <div [ngClass]="{ 'd-none': !isSidebarOpen, 'd-md-block': true }"
+         class="col-12 col-md-3 col-lg-2 bg-secondary text-white px-3 py-3 sidebar-fixed">
+      <h5 class="mb-3">Templates Categories</h5>
+      <div class="d-flex flex-column">
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('all')">All</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('attorney')">Attorney ID Cards</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('church')">Church Badges</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('doctor')">Doctor</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('employees')">Employees Badges</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('firefighter')">Firefighter ID Cards</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('press')">Press Pass</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('school')">School ID Cards</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('service')">Service Dogs ID Cards</p>
+      </div>
     </div>
 
+    <!-- Templates Display -->
+    <div class="col-12 col-md-9 col-lg-10 px-3 py-3 mx-auto">
+      <app-template-list [category]="selectedCategory"></app-template-list>
+    </div>
+  </div>
 </div>

@@ -1,3 +1,10 @@
-.temp:hover{
-    border: 2px solid chartreuse;
-}
+.temp {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .temp:hover {
+    transform: scale(1.05); /* Slight zoom effect */
+    border: 2px solid rgb(181, 177, 177);
+    cursor: pointer;
+  }
+  
