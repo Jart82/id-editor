@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { EditorComponent } from './components/editor/editor.component';
+import { EditorComponent } from './components/template-list/editor/editor.component';
 import { TemplateListComponent } from './components/template-list/template-list/template-list.component';
 
 export const routes: Routes = [  // Add 'export' before 'const routes'

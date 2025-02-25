@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluidxxx" style="border: 2px solid green;">
   <!-- Toggle Button for Mobile -->
   <button class="btn btn-primary d-md-none mb-3" (click)="isSidebarOpen = !isSidebarOpen">
     {{ isSidebarOpen ? "Hide Categories" : "Show Categories" }}
@@ -23,7 +23,7 @@
     </div>
 
     <!-- Templates Display -->
-    <div class="col-12 col-md-9 col-lg-10 px-3 py-3 mx-auto">
+    <div class="col-12 px-3 py-3 mx-auto" style="border: 2px solid blue;">
       <app-template-list [category]="selectedCategory"></app-template-list>
     </div>
   </div>

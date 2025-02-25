@@ -7,4 +7,6 @@
     border: 2px solid rgb(181, 177, 177);
     cursor: pointer;
   }
-  
+.temp-sc{
+  scale: 0.6;
+}
