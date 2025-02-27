@@ -1,0 +1,134 @@
+<div class="container">
+  <div class="row justify-content-center">
+    
+    <!-- ID Card Display -->
+    <div class="col-lg-6 col-md-8 col-sm-12">
+      <div class="cardbox m-2">
+        
+        <!-- Front of ID Card -->
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'">
+          <div class="text-center">
+            <h3 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">
+              {{ templateData.schoolName | uppercase}}
+            </h3>
+            <hr />
+            <p>{{ templateData.schoolAddress | uppercase}}</p>
+          </div>
+
+          <div class="id-mid-sect align-items-center">
+            <div class="text-center">
+              <h5 class="my-2 mb-3">{{ templateData.grade | uppercase}}</h5>
+            </div>
+            <div>
+              <img
+                [src]="templateData.studentPhoto"
+                alt="passport"
+                class="rounded img-fluid"
+                style="max-height: 200px; width: 140px; object-fit: cover"
+              />
+            </div>
+            <div class="text-center">
+              <p>{{ templateData.studentYear }}</p>
+              <img
+                [src]="templateData.schoolLogo"
+                alt="school logo"
+                class="img-fluid"
+                style="max-width: 80px"
+              />
+            </div>
+          </div>
+
+          <div class="text-center mt-3 card-front-foot">
+            <h2>{{ templateData.studentName | uppercase}}</h2>
+          </div>
+        </div>
+
+        <!-- Back of ID Card -->
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'">
+          <div class="card-back-top"></div>
+
+          <div class="card-mid-back text-center mt-3 align-items-center">
+            <qrcode
+              [qrdata]="templateData.studentName"
+              [width]="120"
+              [errorCorrectionLevel]="'M'"
+            ></qrcode>
+          </div>
+          <p class="m-2 text-center">If found, return to school authorities.</p>
+
+          <div class="card-back-foot mt-3 align-items-center">
+            <p class="text-muted">Authorized Signature</p>
+            <img
+              [src]="templateData.signature"
+              alt="signature"
+              class="img-fluid"
+              style="max-height: 50px"
+            />
+          </div>
+        </div>
+
+        <!-- View Toggle Buttons -->
+        <div class="row">
+          <div class="col-12 text-center mb-3">
+            <div class="btn-group">
+              <button type="button" (click)="changeView('front')" class="btn"
+                [ngClass]="currentView === 'front' ? 'btn-success' : 'btn-secondary'">
+                Front View
+              </button>
+              <button type="button" (click)="changeView('back')" class="btn"
+                [ngClass]="currentView === 'back' ? 'btn-success' : 'btn-secondary'">
+                Back View
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editing Section -->
+    <div class="col-lg-4 col-md-8 col-sm-12" *ngIf="editMode">
+      <div class="edit-panel p-3">
+        <h4>Edit Text & Style</h4>
+    
+        <!-- Dropdown to Select Field -->
+        <label>Select Field to Edit:</label>
+        <select [(ngModel)]="selectedField" class="form-control">
+          <option *ngFor="let key of editableFields" [value]="key">{{ key }}</option>
+        </select>
+    
+        <!-- Dynamic Input Based on Selection -->
+        <div *ngIf="selectedField">
+          <label>{{ selectedField }}</label>
+          <input type="text" [(ngModel)]="templateData[selectedField]" class="form-control" />
+        </div>
+    
+        <hr />
+    
+        <!-- Styling Options -->
+        <label>Font Size:</label>
+        <input type="range" min="10" max="30" [(ngModel)]="fontSize" class="form-range" />
+    
+        <label>Font Color:</label>
+        <input type="color" [(ngModel)]="fontColor" class="form-control form-control-color" />
+
+        <label>Font Color:</label>
+        <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
+    
+        <label>Text Alignment:</label>
+        <select [(ngModel)]="textAlign" class="form-control">
+          <option value="left">Left</option>
+          <option value="center">Center</option>
+          <option value="right">Right</option>
+        </select>
+    
+        <button class="btn btn-primary mt-3" (click)="saveChanges()">Save Changes</button>
+      </div>
+    </div>
+    
+  <!-- Toggle Edit Mode -->
+  <div class="text-center mt-3">
+    <button class="btn btn-warning" (click)="toggleEdit()">
+      {{ editMode ? 'Close Editor' : 'Edit ID Card' }}
+    </button>
+  </div>
+</div>

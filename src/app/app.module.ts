@@ -1,21 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
+import { AppComponent } from './app.component';
+import { CategoryComponent } from './components/template-list/category/category.component';
+import { TemplateListComponent } from './components/template-list/template-list/template-list.component';
+import { EditorComponent } from './components/editor/editor.component';
+import { AppRoutingModule } from './app.routes';
 
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatDialogModule
+    AppComponent,
+    TemplateListComponent,
+    CategoryComponent,
+    EditorComponent,
+    AppRoutingModule
   ]
 })
 export class AppModule { }

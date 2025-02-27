@@ -1,29 +1,70 @@
-<div class="id-body p-3">
-    <!-- id top section -->
-    <div class="text-center">
-        <h1>{{schoolName}}</h1>
-        <hr>
-        <h4>{{schoolAddress}}</h4>
-    </div>
+<div class="template-list">
+  <div 
+    class="cardbox m-2" 
+    *ngFor="let template of templates"
+    (click)="selectTemplate(template)" 
+  >
+    <!-- Front of ID Card -->
+    <div class="id-body p-3 m-3" *ngIf="currentView === 'front'">
+      <div class="text-center">
+        <h3>{{ template.schoolName }}</h3>
+        <hr />
+        <p>{{ template.schoolAddress }}</p>
+      </div>
 
-    <!-- id mid section -->
-    <div class="dflex justify-content-between align-items-center">
+      <div class="id-mid-sect align-items-center">
         <div class="text-center">
-            <h5 class="my-2 mb-3">{{grade}}</h5>
-            <qrcode
-            [qrdata]="studentName"
-            [width]="50"
-            [errorCorrectionLevel]="'M'"
-          ></qrcode>
+          <h5 class="my-2 mb-3">{{ template.grade }}</h5>
         </div>
         <div>
-            <img src="assets/school-logo.jpg" alt="school logo" class="img-fluid" style="max-width: 70px">
+          <img
+            [src]="template.studentPhoto"
+            alt="passport"
+            class="rounded img-fluid"
+            style="max-height: 200px; width: 140px; object-fit: cover"
+          />
         </div>
-        <div></div>
+        <div class="text-center">
+          <p>{{ template.studentYear }}</p>
+          <img
+            [src]="template.schoolLogo"
+            alt="school logo"
+            class="img-fluid"
+            style="max-width: 80px"
+          />
+        </div>
+      </div>
+
+      <div class="text-center mt-3 card-front-foot">
+        <h2>{{ template.studentName }}</h2>
+      </div>
     </div>
 
-    <!-- id foot section -->
-    <div>
+    <!-- Back of ID Card -->
+    <div class="id-body p-3 m-3" *ngIf="currentView === 'back'">
+      <div class="card-back-top"></div>
 
+      <div class="card-mid-back text-center mt-3 align-items-center">
+        <qrcode
+          [qrdata]="template.studentName"
+          [width]="120"
+          [errorCorrectionLevel]="'M'"
+        ></qrcode>
+      </div>
+      <p class="m-2 text-center">If found, return to school authorities.</p>
+
+      <div class="card-back-foot mt-3 align-items-center">
+        <p class="text-muted">Authorized Signature</p>
+        <img
+          [src]="template.signature"
+          alt="signature"
+          class="img-fluid"
+          style="max-height: 50px"
+        />
+      </div>
     </div>
+
+    <!-- View Toggle Buttons -->
+    
+  </div>
 </div>

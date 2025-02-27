@@ -1,9 +1,18 @@
-import { Routes } from '@angular/router';
-import { EditorComponent } from './components/template-list/editor/editor.component';
-import { TemplateListComponent } from './components/template-list/template-list/template-list.component';
+import { RouterModule, Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { EditorComponent } from './components/editor/editor.component';
+import { AppComponent } from './app.component';
+import { Template03Component } from './components/template-list/template03/template03.component';
 
 export const routes: Routes = [  // Add 'export' before 'const routes'
-  { path: '', component: TemplateListComponent },
-  { path: 'editor/:id', component: EditorComponent },
+  { path: '', redirectTo: 'template', pathMatch: 'full' },
+  { path: 'template', component: Template03Component },
+  { path: 'editor', component: EditorComponent},
+  { path: '**', redirectTo: 'template' },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
 export class AppRoutingModule { }

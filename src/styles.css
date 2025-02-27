@@ -1,1 +1,118 @@
 /* You can add global styles to this file, and also import other style files */
+.id-body {
+    position: relative; /* Ensure proper layering */
+    border: 2px solid grey;
+    aspect-ratio: 3 / 2;
+    width: 518px;
+    height: 331px;
+    border-radius: 40px;
+    overflow: hidden; /* Prevent background overflow */
+  }
+  
+  .id-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/assets/schoolwatermark.jpg") center/contain no-repeat;
+    opacity: 0.2; /* Apply transparency ONLY to the background */
+    z-index: -1; /* Place behind the content */
+    pointer-events: none; /* Prevent interaction */
+  }
+  
+  .id-body {
+      position: relative;
+      border: 2px solid grey;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+      padding: 10px;
+    }
+    
+    /* ✅ Always visible watermark */
+    .id-body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('/assets/schoolwatermark.jpg') center/contain no-repeat; /* Ensure it fits */
+      opacity: 0.2; /* Adjust transparency */
+      z-index: 0; /* Ensure it stays behind content */
+      pointer-events: none; /* Prevent interaction */
+    }
+    
+  
+  .id-mid-sect {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-back-top {
+    height: 50px;
+    background-color: black;
+  }
+  .card-back-foot {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .template-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust grid dynamically */
+      gap: 20px; /* Space between cards */
+      justify-content: center; /* Center align items */
+      padding: 20px;
+  }
+  
+  .cardbox {
+      width: 518px; /* Set a fixed width */
+    max-width: 100%; /* Prevent stretching */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .card-front-foot{
+      background-color: rgb(62, 61, 61);
+      color: whitesmoke;
+  }
+  
+  .cardbox:hover {
+    transform: scale(1.05);
+  }
+  
+  .card-back-top {
+    height: 40px;
+    background-color: black;
+  }
+  
+  .card-back-foot {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  /* Responsive Grid Layout */
+  @media (max-width: 768px) {
+    .template-list {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .template-list {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+  

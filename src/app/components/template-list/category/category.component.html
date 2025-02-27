@@ -1,30 +1,55 @@
-<div class="container-fluidxxx" style="border: 2px solid green;">
+<div >
   <!-- Toggle Button for Mobile -->
-  <button class="btn btn-primary d-md-none mb-3" (click)="isSidebarOpen = !isSidebarOpen">
+  <button
+    class="btn btn-primary d-md-none mb-3"
+    (click)="isSidebarOpen = !isSidebarOpen"
+  >
     {{ isSidebarOpen ? "Hide Categories" : "Show Categories" }}
   </button>
 
-  <div class="row">
+  <div class="cards-content">
     <!-- Sidebar (Toggle for Mobile) -->
-    <div [ngClass]="{ 'd-none': !isSidebarOpen, 'd-md-block': true }"
-         class="col-12 col-md-3 col-lg-2 bg-secondary text-white px-3 py-3 sidebar-fixed">
+    <div
+      [ngClass]="{ 'd-none': !isSidebarOpen, 'd-md-block': true }"
+      class="vh-100 bg-secondary text-white px-3 py-3 sidebar-fixed"
+    >
       <h5 class="mb-3">Templates Categories</h5>
       <div class="d-flex flex-column">
         <p class="p-2 catbtn cursor-pointer" (click)="changeCat('all')">All</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('attorney')">Attorney ID Cards</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('church')">Church Badges</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('doctor')">Doctor</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('employees')">Employees Badges</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('firefighter')">Firefighter ID Cards</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('press')">Press Pass</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('school')">School ID Cards</p>
-        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('service')">Service Dogs ID Cards</p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('attorney')">
+          Attorney ID Cards
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('church')">
+          Church Badges
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('doctor')">
+          Doctor
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('employees')">
+          Employees Badges
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('firefighter')">
+          Firefighter ID Cards
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('press')">
+          Press Pass
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('school')">
+          School ID Cards
+        </p>
+        <p class="p-2 catbtn cursor-pointer" (click)="changeCat('service')">
+          Service Dogs ID Cards
+        </p>
       </div>
     </div>
 
     <!-- Templates Display -->
-    <div class="col-12 px-3 py-3 mx-auto" style="border: 2px solid blue;">
-      <app-template-list [category]="selectedCategory"></app-template-list>
+    <div class="col-12 px-3 py-3 mx-auto">
+      <app-template-list
+        [category]="selectedCategory"
+        (templateSelected)="onTemplateSelected($event)"
+      ></app-template-list>
+
     </div>
   </div>
 </div>
