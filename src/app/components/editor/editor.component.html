@@ -6,7 +6,7 @@
       <div class="cardbox m-2">
         
         <!-- Front of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': templateData.bgColor || '#ffffff'}">
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius, 'border-size.px': borderSize, 'border-style': borderStyle, 'border-color': borderColor }">
           <div class="text-center">
             <h3 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">
               {{ templateData.schoolName | uppercase}}
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Back of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'" >
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'" [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius}">
           <div class="card-back-top"></div>
 
           <div class="card-mid-back text-center mt-3 align-items-center">
@@ -103,18 +103,40 @@
         </div>
     
         <hr />
-        
-        <!-- Background Color Picker -->
-        <label>Background Color:</label>
-        <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
-
-
+      
         <!-- Styling Options -->
         <label>Font Size:</label>
-        <input type="range" min="10" max="30" [(ngModel)]="this.fontSize" class="form-range" />
+        <input type="range" min="10" max="30" [(ngModel)]="fontSize" class="form-range" />
+
+        <label>Border Radius:</label>
+        <input type="range" min="0" max="100" [(ngModel)]="borderRadius" class="form-range" />
+
+        <label>Border Size:</label>
+        <input type="range" min="1" max="100" [(ngModel)]="borderSize" class="form-range" />
+
+        <label>Border Style:</label>
+        <select [(ngModel)]="borderStyle" class="form-control">
+          <option value="none">None</option>
+          <option value="solid">Solid</option>
+          <option value="dotted">Dotted</option>
+          <option value="dashed">Dashed</option>
+          <option value="double">Double</option>
+          <option value="groove">Groove</option>
+          <option value="hidden">Hidden</option>
+        </select>
+
+        <label>Border color:</label>
+        <input type="color" [(ngModel)]="borderColor" class="form-control form-control-color" />
+
+
+
     
         <label>Font Color:</label>
         <input type="color" [(ngModel)]="fontColor" class="form-control form-control-color" />
+
+        <label>Background Color:</label>
+        <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
+    
     
         <label>Text Alignment:</label>
         <select [(ngModel)]="textAlign" class="form-control">

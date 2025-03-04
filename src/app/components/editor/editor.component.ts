@@ -21,6 +21,10 @@ export class EditorComponent implements OnInit {
   fontColor: string = "#000000";
   textAlign: string = "center";
   bgColor: string = "#ffffff";
+  borderRadius: number = 40;
+  borderSize: number = 20;
+  borderStyle: string = 'solid';
+  borderColor: string = 'black';
 
   // Editable fields
   editableFields: string[] = [];
@@ -55,7 +59,8 @@ export class EditorComponent implements OnInit {
         styles: {
           fontSize: this.fontSize,
           color: this.fontColor,
-          textAlign: this.textAlign
+          textAlign: this.textAlign,
+          borderRadius: this.borderRadius
         }
       };
     }
