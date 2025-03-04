@@ -1,23 +1,23 @@
 <div class="container">
-  <div class="row justify-content-center">
+  <div class="row justify-content-center" >
     
     <!-- ID Card Display -->
-    <div class="col-lg-6 col-md-8 col-sm-12">
+    <div class="col-lg-6 col-md-8 col-sm-12" >
       <div class="cardbox m-2">
         
         <!-- Front of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'">
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': templateData.bgColor || '#ffffff'}">
           <div class="text-center">
             <h3 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">
               {{ templateData.schoolName | uppercase}}
             </h3>
             <hr />
-            <p>{{ templateData.schoolAddress | uppercase}}</p>
+            <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.schoolAddress | uppercase}}</p>
           </div>
 
           <div class="id-mid-sect align-items-center">
             <div class="text-center">
-              <h5 class="my-2 mb-3">{{ templateData.grade | uppercase}}</h5>
+              <h5 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}" class="my-2 mb-3">{{ templateData.grade | uppercase}}</h5>
             </div>
             <div>
               <img
@@ -28,7 +28,7 @@
               />
             </div>
             <div class="text-center">
-              <p>{{ templateData.studentYear }}</p>
+              <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.studentYear }}</p>
               <img
                 [src]="templateData.schoolLogo"
                 alt="school logo"
@@ -39,12 +39,12 @@
           </div>
 
           <div class="text-center mt-3 card-front-foot">
-            <h2>{{ templateData.studentName | uppercase}}</h2>
+            <h2 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.studentName | uppercase}}</h2>
           </div>
         </div>
 
         <!-- Back of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'">
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'" >
           <div class="card-back-top"></div>
 
           <div class="card-mid-back text-center mt-3 align-items-center">
@@ -54,7 +54,7 @@
               [errorCorrectionLevel]="'M'"
             ></qrcode>
           </div>
-          <p class="m-2 text-center">If found, return to school authorities.</p>
+          <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}" class="m-2 text-center">If found, return to school authorities.</p>
 
           <div class="card-back-foot mt-3 align-items-center">
             <p class="text-muted">Authorized Signature</p>
@@ -103,16 +103,18 @@
         </div>
     
         <hr />
-    
+        
+        <!-- Background Color Picker -->
+        <label>Background Color:</label>
+        <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
+
+
         <!-- Styling Options -->
         <label>Font Size:</label>
-        <input type="range" min="10" max="30" [(ngModel)]="fontSize" class="form-range" />
+        <input type="range" min="10" max="30" [(ngModel)]="this.fontSize" class="form-range" />
     
         <label>Font Color:</label>
         <input type="color" [(ngModel)]="fontColor" class="form-control form-control-color" />
-
-        <label>Font Color:</label>
-        <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
     
         <label>Text Alignment:</label>
         <select [(ngModel)]="textAlign" class="form-control">

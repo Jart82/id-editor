@@ -5,16 +5,16 @@
     (click)="selectTemplate(template)" 
   >
     <!-- Front of ID Card -->
-    <div class="id-body p-3 m-3" *ngIf="currentView === 'front'">
+    <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': template.bgColor || '#ffffff'}">
       <div class="text-center">
-        <h3>{{ template.schoolName }}</h3>
+        <h3>{{ template.schoolName | uppercase}}</h3>
         <hr />
-        <p>{{ template.schoolAddress }}</p>
+        <p>{{ template.schoolAddress | uppercase}}</p>
       </div>
 
       <div class="id-mid-sect align-items-center">
         <div class="text-center">
-          <h5 class="my-2 mb-3">{{ template.grade }}</h5>
+          <h5 class="my-2 mb-3">{{ template.grade | uppercase}}</h5>
         </div>
         <div>
           <img
@@ -25,7 +25,7 @@
           />
         </div>
         <div class="text-center">
-          <p>{{ template.studentYear }}</p>
+          <p>{{ template.studentYear | uppercase}}</p>
           <img
             [src]="template.schoolLogo"
             alt="school logo"
@@ -35,8 +35,8 @@
         </div>
       </div>
 
-      <div class="text-center mt-3 card-front-foot">
-        <h2>{{ template.studentName }}</h2>
+      <div class="text-center mt-2 card-front-foot">
+        <h2>{{ template.studentName | uppercase}}</h2>
       </div>
     </div>
 
@@ -67,4 +67,26 @@
     <!-- View Toggle Buttons -->
     
   </div>
+
+  
+
+
+  
+  
 </div>
+<div>
+  <!-- change card view type -->
+  <!-- <div class="text-center">
+    <div class="btn-group">
+      <button type="button" class="btn btn-success">Lanscape</button>   
+      <button type="button" class="btn btn-succcess">Portrait</button>
+    </div>
+  </div> -->
+
+  <!-- portrait view -->
+   <!-- <div>
+    
+   </div> -->
+
+</div>
+

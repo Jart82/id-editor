@@ -12,11 +12,11 @@ import { QRCodeComponent } from 'angularx-qrcode';
   imports: [CommonModule, FormsModule, QRCodeComponent]
 })
 export class EditorComponent implements OnInit {
-  templateData: any = {}; 
+  templateData: any = {};
   currentView: string = 'front';
   editMode: boolean = false;
 
-  // Default Styles
+  // Styling properties
   fontSize: number = 16;
   fontColor: string = "#000000";
   textAlign: string = "center";
@@ -34,7 +34,7 @@ export class EditorComponent implements OnInit {
       this.router.navigate(['/template']);
     } else {
       console.log("Loaded template data:", this.templateData);
-      this.editableFields = Object.keys(this.templateData); // Extract field names dynamically
+      this.editableFields = Object.keys(this.templateData);
     }
   }
 
@@ -49,7 +49,30 @@ export class EditorComponent implements OnInit {
   }
 
   saveChanges() {
-    console.log('Updated Template:', this.templateData);
+    if (this.selectedField) {
+      this.templateData[this.selectedField] = {
+        text: this.templateData[this.selectedField] || "",
+        styles: {
+          fontSize: this.fontSize,
+          color: this.fontColor,
+          textAlign: this.textAlign
+        }
+      };
+    }
+    
+    localStorage.setItem('templates', JSON.stringify([this.templateData]));
     alert('Changes Saved!');
+  }
+
+  // Function to get dynamic styles for a specific field
+  getTextStyles(field: string) {
+    if (this.templateData[field] && this.templateData[field].styles) {
+      return {
+        'font-size.px': this.templateData[field].styles.fontSize,
+        'color': this.templateData[field].styles.color,
+        'text-align': this.templateData[field].styles.textAlign
+      };
+    }
+    return {};
   }
 }
