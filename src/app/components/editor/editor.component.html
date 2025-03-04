@@ -10,12 +10,12 @@
           [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius, 'border-size.px': borderSize, 'border-style': borderStyle, 'border-color': borderColor }">
           
           <div class="text-center">
-            <h3 (click)="editField('schoolName')" 
+            <h3 (click)="editField('schoolName')" cdkDrag (cdkDragEnded)="onDragEnd($event, 'schoolName')"
                 [ngStyle]="selectedField === 'schoolName' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
               {{ templateData.schoolName | uppercase }}
             </h3>
             <hr />
-            <p (click)="editField('schoolAddress')" 
+            <p (click)="editField('schoolAddress')" cdkDrag (cdkDragEnded)="onDragEnd($event, 'schoolAddress')"
                [ngStyle]="selectedField === 'schoolAddress' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
               {{ templateData.schoolAddress | uppercase }}
             </p>
@@ -23,7 +23,7 @@
 
           <div class="id-mid-sect align-items-center">
             <div class="text-center">
-              <h5 (click)="editField('grade')" 
+              <h5 (click)="editField('grade')" cdkDrag (cdkDragEnded)="onDragEnd($event, 'grade')"
                   [ngStyle]="selectedField === 'grade' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}" 
                   class="my-2 mb-3">
                 {{ templateData.grade | uppercase }}
@@ -32,16 +32,18 @@
             <div>
               <img (click)="editField('studentPhoto')" 
                    [src]="templateData.studentPhoto" 
+                   cdkDrag (cdkDragEnded)="onDragEnd($event, 'studentPhoto')"
                    alt="passport"
                    class="rounded img-fluid"
                    style="max-height: 200px; width: 140px; object-fit: cover" />
             </div>
             <div class="text-center">
-              <p (click)="editField('studentYear')" 
+              <p (click)="editField('studentYear')" cdkDrag (cdkDragEnded)="onDragEnd($event, 'studentYear')"
                  [ngStyle]="selectedField === 'studentYear' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
                 {{ templateData.studentYear }}
               </p>
               <img (click)="editField('schoolLogo')"
+                    cdkDrag (cdkDragEnded)="onDragEnd($event, 'schoolLogo')"
                    [src]="templateData.schoolLogo" 
                    alt="school logo" 
                    class="img-fluid" 
@@ -51,6 +53,7 @@
 
           <div class="text-center mt-3 card-front-foot">
             <h2 (click)="editField('studentName')" 
+                cdkDrag (cdkDragEnded)="onDragEnd($event, 'studentName')"
                 [ngStyle]="selectedField === 'studentName' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
               {{ templateData.studentName | uppercase }}
             </h2>
@@ -64,10 +67,11 @@
           <div class="card-back-top"></div>
 
           <div class="card-mid-back text-center mt-3 align-items-center">
-            <qrcode [qrdata]="templateData.studentName" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
+            <qrcode cdkDrag (cdkDragEnded)="onDragEnd($event, templateData.studentName)" [qrdata]="templateData.studentName" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
           </div>
           
           <p (click)="editField('returnMessage')" 
+              cdkDrag (cdkDragEnded)="onDragEnd($event, 'returnMessage')"
              [ngStyle]="selectedField === 'returnMessage' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}"
              class="m-2 text-center">
             {{ templateData.returnMessage || 'If found, return to school authorities.' }}
@@ -76,6 +80,7 @@
           <div class="card-back-foot mt-3 align-items-center">
             <p class="text-muted">Authorized Signature</p>
             <img (click)="editField('signature')" 
+                  cdkDrag (cdkDragEnded)="onDragEnd($event, 'signature')"
                  [src]="templateData.signature" 
                  alt="signature" 
                  class="img-fluid" 
@@ -119,6 +124,9 @@
         <!-- Styling Options -->
         <label>Font Size:</label>
         <input type="range" min="10" max="30" [(ngModel)]="fontSize" class="form-range" />
+
+        <label>Border Radius:</label>
+        <input type="range" min="1" max="100" [(ngModel)]="borderRadius" class="form-range" />
 
         <label>Font Color:</label>
         <input type="color" [(ngModel)]="fontColor" class="form-control form-control-color" />

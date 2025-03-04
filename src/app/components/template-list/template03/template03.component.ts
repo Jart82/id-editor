@@ -50,7 +50,9 @@ export class Template03Component implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    this.loadTemplates();
+    // this.loadTemplates();
+    // window.addEventListener('storage', () => this.loadTemplates());
+    this.templates = [...this.defaultTemplates];
   }
 
   loadTemplates() {
