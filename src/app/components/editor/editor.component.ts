@@ -22,7 +22,7 @@ export class EditorComponent implements OnInit {
   textAlign: string = "center";
   bgColor: string = "#ffffff";
   borderRadius: number = 40;
-  borderSize: number = 20;
+  borderSize: number = 2;
   borderStyle: string = 'solid';
   borderColor: string = 'black';
 
@@ -52,24 +52,27 @@ export class EditorComponent implements OnInit {
     this.editMode = !this.editMode;
   }
 
+  editField(field: string) {
+    this.selectedField = field;
+    this.editMode = true;
+  }
+
   saveChanges() {
     if (this.selectedField) {
       this.templateData[this.selectedField] = {
-        text: this.templateData[this.selectedField] || "",
+        text: this.templateData[this.selectedField]?.text || "",
         styles: {
           fontSize: this.fontSize,
           color: this.fontColor,
-          textAlign: this.textAlign,
-          borderRadius: this.borderRadius
+          textAlign: this.textAlign
         }
       };
     }
-    
+
     localStorage.setItem('templates', JSON.stringify([this.templateData]));
     alert('Changes Saved!');
   }
 
-  // Function to get dynamic styles for a specific field
   getTextStyles(field: string) {
     if (this.templateData[field] && this.templateData[field].styles) {
       return {
@@ -79,5 +82,20 @@ export class EditorComponent implements OnInit {
       };
     }
     return {};
+  }
+
+  isImageField(field: string): boolean {
+    return ['studentPhoto', 'schoolLogo', 'signature'].includes(field);
+  }
+
+  onFileChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.templateData[this.selectedField] = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 }

@@ -1,69 +1,85 @@
 <div class="container">
-  <div class="row justify-content-center" >
-    
+  <div class="row justify-content-center">
+
     <!-- ID Card Display -->
-    <div class="col-lg-6 col-md-8 col-sm-12" >
+    <div class="col-lg-6 col-md-8 col-sm-12">
       <div class="cardbox m-2">
-        
+
         <!-- Front of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius, 'border-size.px': borderSize, 'border-style': borderStyle, 'border-color': borderColor }">
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'front'"
+          [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius, 'border-size.px': borderSize, 'border-style': borderStyle, 'border-color': borderColor }">
+          
           <div class="text-center">
-            <h3 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">
-              {{ templateData.schoolName | uppercase}}
+            <h3 (click)="editField('schoolName')" 
+                [ngStyle]="selectedField === 'schoolName' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
+              {{ templateData.schoolName | uppercase }}
             </h3>
             <hr />
-            <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.schoolAddress | uppercase}}</p>
+            <p (click)="editField('schoolAddress')" 
+               [ngStyle]="selectedField === 'schoolAddress' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
+              {{ templateData.schoolAddress | uppercase }}
+            </p>
           </div>
 
           <div class="id-mid-sect align-items-center">
             <div class="text-center">
-              <h5 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}" class="my-2 mb-3">{{ templateData.grade | uppercase}}</h5>
+              <h5 (click)="editField('grade')" 
+                  [ngStyle]="selectedField === 'grade' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}" 
+                  class="my-2 mb-3">
+                {{ templateData.grade | uppercase }}
+              </h5>
             </div>
             <div>
-              <img
-                [src]="templateData.studentPhoto"
-                alt="passport"
-                class="rounded img-fluid"
-                style="max-height: 200px; width: 140px; object-fit: cover"
-              />
+              <img (click)="editField('studentPhoto')" 
+                   [src]="templateData.studentPhoto" 
+                   alt="passport"
+                   class="rounded img-fluid"
+                   style="max-height: 200px; width: 140px; object-fit: cover" />
             </div>
             <div class="text-center">
-              <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.studentYear }}</p>
-              <img
-                [src]="templateData.schoolLogo"
-                alt="school logo"
-                class="img-fluid"
-                style="max-width: 80px"
-              />
+              <p (click)="editField('studentYear')" 
+                 [ngStyle]="selectedField === 'studentYear' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
+                {{ templateData.studentYear }}
+              </p>
+              <img (click)="editField('schoolLogo')"
+                   [src]="templateData.schoolLogo" 
+                   alt="school logo" 
+                   class="img-fluid" 
+                   style="max-width: 80px" />
             </div>
           </div>
 
           <div class="text-center mt-3 card-front-foot">
-            <h2 [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}">{{ templateData.studentName | uppercase}}</h2>
+            <h2 (click)="editField('studentName')" 
+                [ngStyle]="selectedField === 'studentName' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}">
+              {{ templateData.studentName | uppercase }}
+            </h2>
           </div>
         </div>
 
         <!-- Back of ID Card -->
-        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'" [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius}">
+        <div class="id-body p-3 m-3" *ngIf="currentView === 'back'"
+          [ngStyle]="{'background-color': bgColor || '#ffffff', 'border-radius.px': borderRadius}">
+          
           <div class="card-back-top"></div>
 
           <div class="card-mid-back text-center mt-3 align-items-center">
-            <qrcode
-              [qrdata]="templateData.studentName"
-              [width]="120"
-              [errorCorrectionLevel]="'M'"
-            ></qrcode>
+            <qrcode [qrdata]="templateData.studentName" [width]="120" [errorCorrectionLevel]="'M'"></qrcode>
           </div>
-          <p [ngStyle]="{'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign}" class="m-2 text-center">If found, return to school authorities.</p>
+          
+          <p (click)="editField('returnMessage')" 
+             [ngStyle]="selectedField === 'returnMessage' ? {'font-size.px': fontSize, 'color': fontColor, 'text-align': textAlign} : {}"
+             class="m-2 text-center">
+            {{ templateData.returnMessage || 'If found, return to school authorities.' }}
+          </p>
 
           <div class="card-back-foot mt-3 align-items-center">
             <p class="text-muted">Authorized Signature</p>
-            <img
-              [src]="templateData.signature"
-              alt="signature"
-              class="img-fluid"
-              style="max-height: 50px"
-            />
+            <img (click)="editField('signature')" 
+                 [src]="templateData.signature" 
+                 alt="signature" 
+                 class="img-fluid" 
+                 style="max-height: 50px" />
           </div>
         </div>
 
@@ -82,6 +98,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -89,70 +106,36 @@
     <div class="col-lg-4 col-md-8 col-sm-12" *ngIf="editMode">
       <div class="edit-panel p-3">
         <h4>Edit Text & Style</h4>
-    
-        <!-- Dropdown to Select Field -->
-        <label>Select Field to Edit:</label>
-        <select [(ngModel)]="selectedField" class="form-control">
-          <option *ngFor="let key of editableFields" [value]="key">{{ key }}</option>
-        </select>
-    
-        <!-- Dynamic Input Based on Selection -->
+
+        <!-- Field Input -->
         <div *ngIf="selectedField">
           <label>{{ selectedField }}</label>
-          <input type="text" [(ngModel)]="templateData[selectedField]" class="form-control" />
+          <input *ngIf="!isImageField(selectedField)" type="text" [(ngModel)]="templateData[selectedField]" class="form-control" />
+          <input *ngIf="isImageField(selectedField)" type="file" (change)="onFileChange($event)" class="form-control" />
         </div>
-    
+
         <hr />
-      
+
         <!-- Styling Options -->
         <label>Font Size:</label>
         <input type="range" min="10" max="30" [(ngModel)]="fontSize" class="form-range" />
 
-        <label>Border Radius:</label>
-        <input type="range" min="0" max="100" [(ngModel)]="borderRadius" class="form-range" />
-
-        <label>Border Size:</label>
-        <input type="range" min="1" max="100" [(ngModel)]="borderSize" class="form-range" />
-
-        <label>Border Style:</label>
-        <select [(ngModel)]="borderStyle" class="form-control">
-          <option value="none">None</option>
-          <option value="solid">Solid</option>
-          <option value="dotted">Dotted</option>
-          <option value="dashed">Dashed</option>
-          <option value="double">Double</option>
-          <option value="groove">Groove</option>
-          <option value="hidden">Hidden</option>
-        </select>
-
-        <label>Border color:</label>
-        <input type="color" [(ngModel)]="borderColor" class="form-control form-control-color" />
-
-
-
-    
         <label>Font Color:</label>
         <input type="color" [(ngModel)]="fontColor" class="form-control form-control-color" />
 
         <label>Background Color:</label>
         <input type="color" [(ngModel)]="bgColor" class="form-control form-control-color" />
-    
-    
+
         <label>Text Alignment:</label>
         <select [(ngModel)]="textAlign" class="form-control">
           <option value="left">Left</option>
           <option value="center">Center</option>
           <option value="right">Right</option>
         </select>
-    
+
         <button class="btn btn-primary mt-3" (click)="saveChanges()">Save Changes</button>
       </div>
     </div>
-    
-  <!-- Toggle Edit Mode -->
-  <div class="text-center mt-3">
-    <button class="btn btn-warning" (click)="toggleEdit()">
-      {{ editMode ? 'Close Editor' : 'Edit ID Card' }}
-    </button>
+
   </div>
 </div>
