@@ -1,59 +1,39 @@
-# IdCreator
+# ID Editor
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.6.
+A modern, responsive web application for designing and generating custom ID cards. Built with Angular, Material Design, and powerful client-side rendering tools.
 
-## Development server
+![Angular](https://img.shields.io/badge/Angular-19.2-DD0031?logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)
+![License](https://img.shields.io/github/license/Jart82/id-editor)
 
-To start a local development server, run:
+## ✨ Features
 
+- Drag-and-drop editor for positioning text, images, barcodes, and QR codes
+- Real-time preview of ID card layout
+- Export as PNG or PDF
+- Responsive design for desktop and tablet use
+- Built with Angular standalone components and Material UI
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Angular v19.2](https://angular.dev)
+- **UI Components**: [Angular Material](https://material.angular.io) + [CDK](https://material.angular.io/cdk)
+- **Libraries**:
+  - `fabric.js` – Canvas-based image and object manipulation
+  - `html2canvas` – Render DOM to image
+  - `jsPDF` – Generate PDF documents
+  - `angularx-qrcode` – QR code generation
+  - `ngx-barcode6` – Barcode rendering
+- **Styling**: Bootstrap 5
+
+## 🚀 Quick Start
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) v20+
+- npm v10+
+
+### Installation
 ```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+git clone https://github.com/Jart82/id-editor.git
+cd id-editor
+npm install
