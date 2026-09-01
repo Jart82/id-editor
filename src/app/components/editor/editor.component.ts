@@ -117,7 +117,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
   set textValue(value: string) {
     if (!this.selectedObject?.data) return;
-    void this.idCard.updateField(this.activeCanvas, this.template, this.currentView, this.selectedObject.data.fieldKey, value);
+    void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, this.selectedObject.data.fieldKey, value);
   }
 
   get fontSize(): number {
@@ -165,7 +165,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     const fieldKey = this.selectedObject.data.fieldKey;
     const reader = new FileReader();
     reader.onload = () => {
-      void this.idCard.updateField(this.activeCanvas, this.template, this.currentView, fieldKey, reader.result as string);
+      void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, fieldKey, reader.result as string);
     };
     reader.readAsDataURL(file);
     input.value = '';

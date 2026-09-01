@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Canvas, FabricImage, Textbox } from 'fabric';
 import { CanvasSide, FieldKey, IdCardTemplate, IdCardValues } from '../models/id-card.model';
-import { generateQrDataUrl } from '../utils/qr-code.util';
+import { buildQrPayload, generateQrDataUrl } from '../utils/qr-code.util';
 import { generateRandomIdCardValues } from '../utils/random-data.util';
 
 const CARD_WIDTH = 518;
@@ -85,6 +85,11 @@ const VALUE_FIELDS: FieldKey[] = [
   'schoolWaterMark', 'returnMessage',
 ];
 
+/** Fields that feed the QR payload — changing any of these regenerates it. */
+const QR_TRIGGER_FIELDS: ReadonlySet<FieldKey> = new Set([
+  'studentName', 'schoolName', 'studentId', 'grade', 'department', 'studentYear', 'schoolAddress',
+]);
+
 @Injectable({ providedIn: 'root' })
 export class IdCardService {
   private readonly storageKey = 'id-editor:templates';
@@ -145,7 +150,14 @@ export class IdCardService {
     const json = template[side];
     if (json) {
       await canvas.loadFromJSON(json);
+      // The QR image is a derived artifact, not user-authored content — a
+      // persisted snapshot only owns its position/size/rotation. Always
+      // recompute its pixels from the current values so a template saved
+      // before a QR-format change (or any other values/QR drift) can't stay
+      // stuck showing stale data forever.
+      await this.refreshQrCode(canvas, template.values);
       canvas.requestRenderAll();
+      this.persistCanvasSnapshot(canvas, template, side);
       return;
     }
     if (side === 'front') await this.buildFrontLayout(canvas, template.values);
@@ -161,39 +173,53 @@ export class IdCardService {
     return canvas.getObjects().find((o) => o.data?.fieldKey === fieldKey);
   }
 
+  private async refreshQrCode(canvas: Canvas, values: IdCardValues): Promise<void> {
+    const qrObj = this.findFieldObject(canvas, 'qrCode');
+    if (!(qrObj instanceof FabricImage)) return;
+    const qrDataUrl = await generateQrDataUrl(buildQrPayload(values));
+    await qrObj.setSrc(qrDataUrl, { crossOrigin: 'anonymous' });
+  }
+
   /** The one place that ever writes a field's content — manual edits, image
    *  replacement, and Randomize all go through this so they can't drift out
-   *  of sync the way the old saveChanges()/onDragEnd() pair did. */
-  async updateField(canvas: Canvas, template: IdCardTemplate, side: CanvasSide, fieldKey: FieldKey, value: string): Promise<void> {
-    const obj = this.findFieldObject(canvas, fieldKey);
-    if (obj) {
+   *  of sync the way the old saveChanges()/onDragEnd() pair did. Touches
+   *  both canvases (not just whichever side is on screen) so the QR code —
+   *  which lives only on the back — never goes stale when a field is edited
+   *  from the front. */
+  async updateField(frontCanvas: Canvas, backCanvas: Canvas, template: IdCardTemplate, fieldKey: FieldKey, value: string): Promise<void> {
+    const sides: { canvas: Canvas; side: CanvasSide }[] = [
+      { canvas: frontCanvas, side: 'front' },
+      { canvas: backCanvas, side: 'back' },
+    ];
+
+    for (const { canvas, side } of sides) {
+      const obj = this.findFieldObject(canvas, fieldKey);
+      if (!obj) continue;
       if (obj.data?.fieldType === 'text') {
         (obj as Textbox).set('text', this.displayValue(fieldKey, value));
       } else if (obj instanceof FabricImage) {
         await obj.setSrc(value, { crossOrigin: 'anonymous' });
       }
       canvas.requestRenderAll();
+      this.persistCanvasSnapshot(canvas, template, side);
     }
+
     this.setValue(template.values, fieldKey, value);
 
-    if (fieldKey === 'studentId' || fieldKey === 'studentName') {
-      const qrObj = this.findFieldObject(canvas, 'qrCode');
-      if (qrObj instanceof FabricImage) {
-        const qrDataUrl = await generateQrDataUrl(template.values.studentId || template.values.studentName);
-        await qrObj.setSrc(qrDataUrl, { crossOrigin: 'anonymous' });
+    if (QR_TRIGGER_FIELDS.has(fieldKey)) {
+      for (const { canvas, side } of sides) {
+        await this.refreshQrCode(canvas, template.values);
         canvas.requestRenderAll();
+        this.persistCanvasSnapshot(canvas, template, side);
       }
     }
-
-    this.persistCanvasSnapshot(canvas, template, side);
   }
 
   async applyRandomValues(frontCanvas: Canvas, backCanvas: Canvas, template: IdCardTemplate): Promise<void> {
     const values = generateRandomIdCardValues();
     for (const key of VALUE_FIELDS) {
       const value = this.getValue(values, key);
-      await this.updateField(frontCanvas, template, 'front', key, value);
-      await this.updateField(backCanvas, template, 'back', key, value);
+      await this.updateField(frontCanvas, backCanvas, template, key, value);
     }
   }
 
@@ -215,7 +241,7 @@ export class IdCardService {
       case 'signature': return values.signature;
       case 'schoolWaterMark': return values.schoolWaterMark;
       case 'returnMessage': return values.returnMessage;
-      case 'qrCode': return values.studentId || values.studentName;
+      case 'qrCode': return buildQrPayload(values);
     }
   }
 
@@ -286,7 +312,7 @@ export class IdCardService {
   private async buildBackLayout(canvas: Canvas, values: IdCardValues): Promise<void> {
     canvas.backgroundColor = values.bgColor || '#ffffff';
 
-    const qrDataUrl = await generateQrDataUrl(values.studentId || values.studentName);
+    const qrDataUrl = await generateQrDataUrl(buildQrPayload(values));
     const qr = await this.addImage(canvas, qrDataUrl, 'qrCode', { left: this.cardWidth / 2, top: 25, originX: 'center' });
     qr.scaleToWidth(120);
 
