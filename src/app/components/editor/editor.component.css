@@ -1,5 +1,24 @@
-.editor-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.canvas-stage {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.canvas-host {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-panel {
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.edit-panel label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 500;
 }

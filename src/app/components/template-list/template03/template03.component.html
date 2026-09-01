@@ -1,33 +1,40 @@
 <div class="template-list">
-  <div 
-    class="cardbox m-2" 
+  <div class="cardbox m-2 blank-card" (click)="startBlankCard()">
+    <div class="blank-card-inner text-center">
+      <div class="plus">+</div>
+      <p>Start Blank Card</p>
+    </div>
+  </div>
+
+  <div
+    class="cardbox m-2"
     *ngFor="let template of templates"
-    (click)="selectTemplate(template)" 
+    (click)="selectTemplate(template)"
   >
     <!-- Front of ID Card -->
-    <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': template.bgColor || '#ffffff'}">
+    <div class="id-body p-3 m-3" *ngIf="currentView === 'front'" [ngStyle]="{'background-color': template.values.bgColor || '#ffffff'}">
       <div class="text-center">
-        <h3>{{ template.schoolName | uppercase}}</h3>
+        <h3>{{ template.values.schoolName | uppercase}}</h3>
         <hr />
-        <p>{{ template.schoolAddress | uppercase}}</p>
+        <p>{{ template.values.schoolAddress | uppercase}}</p>
       </div>
 
       <div class="id-mid-sect align-items-center">
         <div class="text-center">
-          <h5 class="my-2 mb-3">{{ template.grade | uppercase}}</h5>
+          <h5 class="my-2 mb-3">{{ template.values.grade | uppercase}}</h5>
         </div>
         <div>
           <img
-            [src]="template.studentPhoto"
+            [src]="template.values.studentPhoto"
             alt="passport"
             class="rounded img-fluid"
             style="max-height: 200px; width: 140px; object-fit: cover"
           />
         </div>
         <div class="text-center">
-          <p>{{ template.studentYear | uppercase}}</p>
+          <p>{{ template.values.studentYear | uppercase}}</p>
           <img
-            [src]="template.schoolLogo"
+            [src]="template.values.schoolLogo"
             alt="school logo"
             class="img-fluid"
             style="max-width: 80px"
@@ -36,7 +43,7 @@
       </div>
 
       <div class="text-center mt-2 card-front-foot">
-        <h2>{{ template.studentName | uppercase}}</h2>
+        <h2>{{ template.values.studentName | uppercase}}</h2>
       </div>
     </div>
 
@@ -45,48 +52,19 @@
       <div class="card-back-top"></div>
 
       <div class="card-mid-back text-center mt-3 align-items-center">
-        <qrcode
-          [qrdata]="template.studentName"
-          [width]="120"
-          [errorCorrectionLevel]="'M'"
-        ></qrcode>
+        <div class="qr-placeholder mx-auto"></div>
       </div>
-      <p class="m-2 text-center">If found, return to school authorities.</p>
+      <p class="m-2 text-center">{{ template.values.returnMessage }}</p>
 
       <div class="card-back-foot mt-3 align-items-center">
         <p class="text-muted">Authorized Signature</p>
         <img
-          [src]="template.signature"
+          [src]="template.values.signature"
           alt="signature"
           class="img-fluid"
           style="max-height: 50px"
         />
       </div>
     </div>
-
-    <!-- View Toggle Buttons -->
-    
   </div>
-
-  
-
-
-  
-  
 </div>
-<div>
-  <!-- change card view type -->
-  <!-- <div class="text-center">
-    <div class="btn-group">
-      <button type="button" class="btn btn-success">Lanscape</button>   
-      <button type="button" class="btn btn-succcess">Portrait</button>
-    </div>
-  </div> -->
-
-  <!-- portrait view -->
-   <!-- <div>
-    
-   </div> -->
-
-</div>
-

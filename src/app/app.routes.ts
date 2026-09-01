@@ -6,7 +6,7 @@ import { Template03Component } from './components/template-list/template03/templ
 export const routes: Routes = [  // Add 'export' before 'const routes'
   { path: '', redirectTo: 'template', pathMatch: 'full' },
   { path: 'template', component: Template03Component },
-  { path: 'editor', component: EditorComponent},
+  { path: 'editor/:id', component: EditorComponent },
   { path: '**', redirectTo: 'template' },
 ];
 

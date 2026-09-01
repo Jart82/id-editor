@@ -1,138 +1,237 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { QRCodeComponent } from 'angularx-qrcode';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Canvas, FabricImage, FabricObject, Textbox } from 'fabric';
+import { CanvasSide, IdCardTemplate } from '../../models/id-card.model';
+import { IdCardService } from '../../services/id-card.service';
+import { exportCanvasPng, exportCardPdf } from '../../utils/export.util';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, QRCodeComponent, DragDropModule ],
+  imports: [CommonModule, FormsModule],
 })
-export class EditorComponent implements OnInit {
-  templateData: any = {};
-  currentView: string = 'front';
-  editMode: boolean = false;
+export class EditorComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('frontCanvas') private frontCanvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('backCanvas') private backCanvasRef!: ElementRef<HTMLCanvasElement>;
 
-  // Styling properties
-  fontSize: number = 16;
-  fontColor: string = '#000000';
-  textAlign: string = 'center';
-  bgColor: string = '#ffffff';
-  borderRadius: number = 40;
-  borderSize: number = 2;
-  borderStyle: string = 'solid';
-  borderColor: string = 'black';
+  template!: IdCardTemplate;
+  currentView: CanvasSide = 'front';
+  selectedObject: FabricObject | null = null;
+  ready = false;
+  statusMessage = '';
 
-  // Editable fields
-  editableFields: string[] = [];
-  selectedField: string = '';
+  private frontCanvas!: Canvas;
+  private backCanvas!: Canvas;
+  private statusTimer?: ReturnType<typeof setTimeout>;
 
-  constructor(private router: Router) {
-    this.templateData = history.state.templateData || {};
+  constructor(private route: ActivatedRoute, private router: Router, private idCard: IdCardService) {}
 
-    if (!this.templateData || Object.keys(this.templateData).length === 0) {
-      console.warn('No template data found in state. Redirecting...');
-      this.router.navigate(['/template']);
+  async ngAfterViewInit(): Promise<void> {
+    const id = this.route.snapshot.paramMap.get('id');
+    let template: IdCardTemplate | undefined;
+
+    if (id && id !== 'new') {
+      template = this.idCard.getTemplate(id);
+      if (!template) {
+        this.router.navigate(['/template']);
+        return;
+      }
     } else {
-      console.log('Loaded template data:', this.templateData);
-      this.editableFields = Object.keys(this.templateData);
+      template = this.idCard.createBlankTemplate();
     }
+    this.template = template;
+
+    this.frontCanvas = new Canvas(this.frontCanvasRef.nativeElement, {
+      width: this.idCard.cardWidth,
+      height: this.idCard.cardHeight,
+      backgroundColor: template.values.bgColor,
+    });
+    this.backCanvas = new Canvas(this.backCanvasRef.nativeElement, {
+      width: this.idCard.cardWidth,
+      height: this.idCard.cardHeight,
+      backgroundColor: template.values.bgColor,
+    });
+
+    await this.idCard.hydrateCanvas(this.frontCanvas, this.template, 'front');
+    await this.idCard.hydrateCanvas(this.backCanvas, this.template, 'back');
+
+    this.bindSelection(this.frontCanvas, 'front');
+    this.bindSelection(this.backCanvas, 'back');
+
+    this.ready = true;
   }
 
-  ngOnInit() {}
-
-  changeView(viewName: string) {
-    this.currentView = viewName;
+  ngOnDestroy(): void {
+    clearTimeout(this.statusTimer);
+    this.frontCanvas?.dispose();
+    this.backCanvas?.dispose();
   }
 
-  toggleEdit() {
-    this.editMode = !this.editMode;
+  private bindSelection(canvas: Canvas, side: CanvasSide): void {
+    canvas.on('selection:created', (e) => { this.selectedObject = e.selected?.[0] ?? null; });
+    canvas.on('selection:updated', (e) => { this.selectedObject = e.selected?.[0] ?? null; });
+    canvas.on('selection:cleared', () => { this.selectedObject = null; });
+    canvas.on('object:modified', () => this.idCard.persistCanvasSnapshot(canvas, this.template, side));
   }
 
-  editField(field: string) {
-    this.selectedField = field;
-    this.editMode = true;
+  private get activeCanvas(): Canvas {
+    return this.currentView === 'front' ? this.frontCanvas : this.backCanvas;
   }
 
-  saveChanges() {
-    if (this.selectedField) {
-      this.templateData[this.selectedField] = {
-        text: this.templateData[this.selectedField] || '',
-        styles: {
-          fontSize: this.fontSize,
-          color: this.fontColor,
-          textAlign: this.textAlign,
-        },
-      };
-    }
-
-    // Retrieve existing templates from local storage
-    let storedTemplates = localStorage.getItem('templates');
-    let templates: any[] = storedTemplates ? JSON.parse(storedTemplates) : [];
-
-    const index = templates.findIndex(
-      (t: any) => t.studentId === this.templateData.studentId
-    );
-
-    if (index !== -1) {
-      templates[index] = this.templateData;
-    } else {
-      templates.push(this.templateData);
-    }
-
-    localStorage.setItem('templates', JSON.stringify(templates));
-    alert('Changes Saved!');
+  private renderAndPersist(): void {
+    this.activeCanvas.requestRenderAll();
+    this.idCard.persistCanvasSnapshot(this.activeCanvas, this.template, this.currentView);
   }
 
-  onDragEnd(event: any, field: string) {
-    if (!this.templateData[field]) {
-      this.templateData[field] = {};
-    }
-  
-    this.templateData[field].position = {
-      x: event.source.getFreeDragPosition().x,
-      y: event.source.getFreeDragPosition().y,
+  private showStatus(msg: string): void {
+    this.statusMessage = msg;
+    clearTimeout(this.statusTimer);
+    this.statusTimer = setTimeout(() => { this.statusMessage = ''; }, 2000);
+  }
+
+  changeView(view: CanvasSide): void {
+    this.currentView = view;
+    this.frontCanvas.discardActiveObject();
+    this.backCanvas.discardActiveObject();
+    this.frontCanvas.requestRenderAll();
+    this.backCanvas.requestRenderAll();
+    this.selectedObject = null;
+  }
+
+  // --- Selected-object panel bindings -------------------------------------
+
+  get selectedIsText(): boolean {
+    return this.selectedObject?.data?.fieldType === 'text';
+  }
+
+  get selectedIsImage(): boolean {
+    return this.selectedObject?.data?.fieldType === 'image' || this.selectedObject?.data?.fieldType === 'qrcode';
+  }
+
+  get textValue(): string {
+    return (this.selectedObject as Textbox)?.text ?? '';
+  }
+  set textValue(value: string) {
+    if (!this.selectedObject?.data) return;
+    void this.idCard.updateField(this.activeCanvas, this.template, this.currentView, this.selectedObject.data.fieldKey, value);
+  }
+
+  get fontSize(): number {
+    return (this.selectedObject as Textbox)?.fontSize ?? 16;
+  }
+  set fontSize(value: number) {
+    if (!this.selectedObject) return;
+    (this.selectedObject as Textbox).set('fontSize', Number(value));
+    this.renderAndPersist();
+  }
+
+  get fontColor(): string {
+    const fill = (this.selectedObject as Textbox)?.fill;
+    return typeof fill === 'string' ? fill : '#000000';
+  }
+  set fontColor(value: string) {
+    if (!this.selectedObject) return;
+    this.selectedObject.set('fill', value);
+    this.renderAndPersist();
+  }
+
+  get textAlign(): string {
+    return (this.selectedObject as Textbox)?.textAlign ?? 'left';
+  }
+  set textAlign(value: string) {
+    if (!this.selectedObject) return;
+    (this.selectedObject as Textbox).set('textAlign', value);
+    this.renderAndPersist();
+  }
+
+  get rotation(): number {
+    return this.selectedObject?.angle ?? 0;
+  }
+  set rotation(value: number) {
+    if (!this.selectedObject) return;
+    this.selectedObject.set('angle', Number(value));
+    this.renderAndPersist();
+  }
+
+  onImageFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.selectedObject?.data) return;
+
+    const fieldKey = this.selectedObject.data.fieldKey;
+    const reader = new FileReader();
+    reader.onload = () => {
+      void this.idCard.updateField(this.activeCanvas, this.template, this.currentView, fieldKey, reader.result as string);
     };
-  
-    this.saveTemplateToLocalStorage();
+    reader.readAsDataURL(file);
+    input.value = '';
   }
 
-  saveTemplateToLocalStorage() {
-    localStorage.setItem('templates', JSON.stringify(this.templateData));
+  bringToFront(): void {
+    if (!this.selectedObject) return;
+    this.activeCanvas.bringObjectToFront(this.selectedObject);
+    this.renderAndPersist();
   }
-  
 
-  getTextStyles(field: string) {
-    if (this.templateData[field] && this.templateData[field].styles) {
-      return {
-        'font-size.px': this.templateData[field].styles.fontSize,
-        color: this.templateData[field].styles.color,
-        'text-align': this.templateData[field].styles.textAlign,
-        'position': 'absolute',
-        'left.px': this.templateData[field]?.position?.x || 0,
-        'top.px': this.templateData[field]?.position?.y || 0,
-      };
+  sendToBack(): void {
+    if (!this.selectedObject) return;
+    this.activeCanvas.sendObjectToBack(this.selectedObject);
+    this.renderAndPersist();
+  }
+
+  deleteSelected(): void {
+    if (!this.selectedObject) return;
+    this.activeCanvas.remove(this.selectedObject);
+    this.activeCanvas.discardActiveObject();
+    this.selectedObject = null;
+    this.renderAndPersist();
+  }
+
+  // --- Card-level bindings -------------------------------------------------
+
+  get bgColor(): string {
+    return this.template.values.bgColor;
+  }
+  set bgColor(value: string) {
+    this.template.values.bgColor = value;
+    this.frontCanvas.backgroundColor = value;
+    this.backCanvas.backgroundColor = value;
+    this.frontCanvas.requestRenderAll();
+    this.backCanvas.requestRenderAll();
+    this.idCard.persistCanvasSnapshot(this.frontCanvas, this.template, 'front');
+    this.idCard.persistCanvasSnapshot(this.backCanvas, this.template, 'back');
+  }
+
+  // --- Actions ---------------------------------------------------------------
+
+  async randomize(): Promise<void> {
+    await this.idCard.applyRandomValues(this.frontCanvas, this.backCanvas, this.template);
+    this.frontCanvas.discardActiveObject();
+    this.backCanvas.discardActiveObject();
+    this.selectedObject = null;
+    this.showStatus('Randomized!');
+  }
+
+  saveTemplate(): void {
+    const currentId = this.route.snapshot.paramMap.get('id');
+    const saved = this.idCard.saveTemplate(this.template);
+    this.template = saved;
+    if (saved.id !== currentId) {
+      this.router.navigate(['/editor', saved.id], { replaceUrl: true });
     }
-    return {};
-  }
-  
-
-  isImageField(field: string): boolean {
-    return ['studentPhoto', 'schoolLogo', 'signature'].includes(field);
+    this.showStatus('Saved!');
   }
 
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.templateData[this.selectedField] = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+  downloadPng(side: CanvasSide): void {
+    const canvas = side === 'front' ? this.frontCanvas : this.backCanvas;
+    exportCanvasPng(canvas, `${this.template.name || 'id-card'}-${side}.png`);
+  }
+
+  downloadPdf(): void {
+    exportCardPdf(this.frontCanvas, this.backCanvas, `${this.template.name || 'id-card'}.pdf`);
   }
 }

@@ -1,0 +1,22 @@
+.blank-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 331px;
+}
+
+.blank-card-inner {
+  color: #6c757d;
+}
+
+.blank-card .plus {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.qr-placeholder {
+  width: 120px;
+  height: 120px;
+  background: repeating-linear-gradient(45deg, #ddd, #ddd 6px, #eee 6px, #eee 12px);
+  border: 1px solid #ccc;
+}
