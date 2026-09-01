@@ -49,6 +49,8 @@ export interface IdCardValues {
 
 export type CanvasSide = 'front' | 'back';
 
+export type ShapeType = 'rect' | 'circle' | 'triangle';
+
 export interface IdCardTemplate {
   id: string;
   name: string;

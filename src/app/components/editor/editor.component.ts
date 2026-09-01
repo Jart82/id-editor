@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Canvas, FabricImage, FabricObject, Textbox } from 'fabric';
-import { CanvasSide, IdCardTemplate } from '../../models/id-card.model';
+import { Canvas, Circle, FabricImage, FabricObject, Rect, Textbox, Triangle } from 'fabric';
+import { CanvasSide, IdCardTemplate, ShapeType } from '../../models/id-card.model';
 import { IdCardService } from '../../services/id-card.service';
 import { exportCanvasPng, exportCardPdf } from '../../utils/export.util';
 
@@ -23,6 +23,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   selectedObject: FabricObject | null = null;
   ready = false;
   statusMessage = '';
+  newShapeType: ShapeType = 'rect';
 
   private frontCanvas!: Canvas;
   private backCanvas!: Canvas;
@@ -104,20 +105,36 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   // --- Selected-object panel bindings -------------------------------------
 
+  // Detection is based on the fabric object's own class rather than our
+  // `data` tag, so free-form elements the user adds (which aren't tied to
+  // any template field) still get the right panel controls.
   get selectedIsText(): boolean {
-    return this.selectedObject?.data?.fieldType === 'text';
+    return this.selectedObject instanceof Textbox;
   }
 
   get selectedIsImage(): boolean {
-    return this.selectedObject?.data?.fieldType === 'image' || this.selectedObject?.data?.fieldType === 'qrcode';
+    return this.selectedObject instanceof FabricImage;
+  }
+
+  get selectedIsShape(): boolean {
+    return this.selectedObject instanceof Rect || this.selectedObject instanceof Circle || this.selectedObject instanceof Triangle;
   }
 
   get textValue(): string {
     return (this.selectedObject as Textbox)?.text ?? '';
   }
   set textValue(value: string) {
-    if (!this.selectedObject?.data) return;
-    void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, this.selectedObject.data.fieldKey, value);
+    if (!this.selectedObject) return;
+    const fieldKey = this.selectedObject.data?.fieldKey;
+    if (fieldKey) {
+      // Tracked template field — go through the single write path so
+      // values/QR stay in sync.
+      void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, fieldKey, value);
+    } else {
+      // Free-form text the user added — just mutate it directly.
+      (this.selectedObject as Textbox).set('text', value);
+      this.renderAndPersist();
+    }
   }
 
   get fontSize(): number {
@@ -157,15 +174,39 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.renderAndPersist();
   }
 
+  get shapeFill(): string {
+    const fill = this.selectedObject?.fill;
+    return typeof fill === 'string' ? fill : '#cccccc';
+  }
+  set shapeFill(value: string) {
+    if (!this.selectedObject) return;
+    this.selectedObject.set('fill', value);
+    this.renderAndPersist();
+  }
+
+  get opacity(): number {
+    return this.selectedObject?.opacity ?? 1;
+  }
+  set opacity(value: number) {
+    if (!this.selectedObject) return;
+    this.selectedObject.set('opacity', Number(value));
+    this.renderAndPersist();
+  }
+
   onImageFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file || !this.selectedObject?.data) return;
+    if (!file || !this.selectedObject) return;
 
-    const fieldKey = this.selectedObject.data.fieldKey;
+    const fieldKey = this.selectedObject.data?.fieldKey;
     const reader = new FileReader();
     reader.onload = () => {
-      void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, fieldKey, reader.result as string);
+      const dataUrl = reader.result as string;
+      if (fieldKey) {
+        void this.idCard.updateField(this.frontCanvas, this.backCanvas, this.template, fieldKey, dataUrl);
+      } else {
+        void (this.selectedObject as FabricImage).setSrc(dataUrl).then(() => this.renderAndPersist());
+      }
     };
     reader.readAsDataURL(file);
     input.value = '';
@@ -207,6 +248,20 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   // --- Actions ---------------------------------------------------------------
+
+  addText(): void {
+    this.selectedObject = this.idCard.addTextElement(this.activeCanvas);
+    this.idCard.persistCanvasSnapshot(this.activeCanvas, this.template, this.currentView);
+  }
+
+  addShape(shape: ShapeType): void {
+    this.selectedObject = this.idCard.addShapeElement(this.activeCanvas, shape);
+    this.idCard.persistCanvasSnapshot(this.activeCanvas, this.template, this.currentView);
+  }
+
+  async addWatermark(): Promise<void> {
+    this.selectedObject = await this.idCard.addWatermark(this.activeCanvas, this.template, this.currentView);
+  }
 
   async randomize(): Promise<void> {
     await this.idCard.applyRandomValues(this.frontCanvas, this.backCanvas, this.template);

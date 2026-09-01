@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Canvas, FabricImage, Textbox } from 'fabric';
-import { CanvasSide, FieldKey, IdCardTemplate, IdCardValues } from '../models/id-card.model';
+import { Canvas, Circle, FabricImage, FabricObject, Rect, Textbox, Triangle } from 'fabric';
+import { CanvasSide, FieldKey, IdCardTemplate, IdCardValues, ShapeType } from '../models/id-card.model';
 import { buildQrPayload, generateQrDataUrl } from '../utils/qr-code.util';
 import { generateRandomIdCardValues } from '../utils/random-data.util';
 
@@ -171,6 +171,59 @@ export class IdCardService {
 
   findFieldObject(canvas: Canvas, fieldKey: FieldKey) {
     return canvas.getObjects().find((o) => o.data?.fieldKey === fieldKey);
+  }
+
+  /** Free-form text the user drops onto the card — not tied to any
+   *  template field, just a plain object captured in the canvas snapshot. */
+  addTextElement(canvas: Canvas): Textbox {
+    const box = new Textbox('New Text', {
+      left: this.cardWidth / 2, top: this.cardHeight / 2, originX: 'center', originY: 'center',
+      width: 200, textAlign: 'center', fontSize: 18, fill: '#000000',
+    });
+    canvas.add(box);
+    canvas.setActiveObject(box);
+    canvas.requestRenderAll();
+    return box;
+  }
+
+  addShapeElement(canvas: Canvas, shape: ShapeType): FabricObject {
+    const common: Record<string, any> = {
+      left: this.cardWidth / 2, top: this.cardHeight / 2, originX: 'center', originY: 'center',
+      fill: '#cccccc',
+    };
+    const obj: FabricObject =
+      shape === 'circle' ? new Circle({ ...common, radius: 40 }) :
+      shape === 'triangle' ? new Triangle({ ...common, width: 80, height: 80 }) :
+      new Rect({ ...common, width: 100, height: 60 });
+    canvas.add(obj);
+    canvas.setActiveObject(obj);
+    canvas.requestRenderAll();
+    return obj;
+  }
+
+  /** Adds (or re-selects, if one is already on this side) the school
+   *  watermark as a large, faint, rotated background image — tagged with
+   *  the 'schoolWaterMark' field so it stays in sync with manual edits and
+   *  Randomize like every other tracked field. */
+  async addWatermark(canvas: Canvas, template: IdCardTemplate, side: CanvasSide): Promise<FabricObject> {
+    const existing = this.findFieldObject(canvas, 'schoolWaterMark');
+    if (existing) {
+      canvas.setActiveObject(existing);
+      canvas.requestRenderAll();
+      return existing;
+    }
+
+    const src = template.values.schoolWaterMark || 'assets/schoolwatermark.jpg';
+    const wm = await this.addImage(canvas, src, 'schoolWaterMark', {
+      left: this.cardWidth / 2, top: this.cardHeight / 2, originX: 'center', originY: 'center',
+      opacity: 0.15, angle: -20,
+    });
+    wm.scaleToWidth(this.cardWidth * 0.8);
+    canvas.sendObjectToBack(wm);
+    canvas.setActiveObject(wm);
+    canvas.requestRenderAll();
+    this.persistCanvasSnapshot(canvas, template, side);
+    return wm;
   }
 
   private async refreshQrCode(canvas: Canvas, values: IdCardValues): Promise<void> {
